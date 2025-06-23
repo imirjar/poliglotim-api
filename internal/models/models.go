@@ -7,19 +7,19 @@ import (
 )
 
 type Course struct {
-	Id          primitive.ObjectID `json:"id" bson:"_id"`
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	Updated     time.Time          `json:"updated"`
-	Logo        File               `json:"logo"`
+	Id          string    `json:"id" `
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Updated     time.Time `json:"updated"`
+	Logo        File      `json:"logo"`
+	Chapters    []Chapter `json:"chapters"`
 }
 
 type Chapter struct {
-	Id          primitive.ObjectID `json:"id" bson:"_id"`
-	Name        string             `json:"name"`
-	Course      Course             `json:"course"`
-	Description string             `json:"description"`
-	Updated     time.Time          `json:"updated"`
+	Id          string    `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Updated     time.Time `json:"updated"`
 }
 
 type File struct {

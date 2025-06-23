@@ -21,7 +21,7 @@ func New() *Config {
 		},
 		StorageConf: &StorageConf{
 			MongoConn: "mongodb://imirjar:W6SgTpAcrTjJ41EX7NLYn7oE@db.sleaf.dev/PoliglotimCourses",
-			PsqlConn:  "jdbc:postgresql://91.122.105.45:5432/poliglotim?user=imirjar&password=e2h2ey7hgt",
+			PsqlConn:  "postgres://imirjar:e2h2ey7hgt@91.122.105.45:5432/poliglotim?sslmode=disable",
 		},
 	}
 }

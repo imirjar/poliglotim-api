@@ -15,7 +15,7 @@ type HttpServer struct {
 
 type Service interface {
 	GetCourses() ([]models.Course, error)
-	GetProgress() (map[models.Course]map[models.Chapter][]models.Lesson, error)
+	// GetProgress() (map[models.Course]map[models.Chapter][]models.Lesson, error)
 	GetLesson() (models.Lesson, error)
 }
 
@@ -30,7 +30,6 @@ func (srv *HttpServer) Run() error {
 	router := mux.NewRouter()
 
 	router.Handle("/courses", srv.getCourses())
-	router.Handle("/progress", srv.getProgress())
 	router.Handle("/lesson", srv.getLesson())
 	return http.ListenAndServe(srv.Port, router)
 }
@@ -51,23 +50,6 @@ func (srv *HttpServer) getCourses() http.HandlerFunc {
 			return
 		}
 
-	}
-}
-
-func (srv *HttpServer) getProgress() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		progress, err := srv.Service.GetProgress()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("content-type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		if err = json.NewEncoder(w).Encode(progress); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 	}
 }
 

@@ -14,18 +14,12 @@ type Service struct {
 
 type Storage interface {
 	GetLesson(id string) (models.Lesson, error)
-	// getCourses() ([]models.Course, error)
-	// getChapters() ([]models.Chapter, error)
-	// getLessons() ([]models.Lesson, error)
-	// getLesson() (models.Lesson, error)
+	GetCourses() ([]models.Course, error)
+	// GetChaptersFromCourse(courseId string) ([]models.Chapter, error)
 }
 
 func (s *Service) GetCourses() ([]models.Course, error) {
 	return []models.Course{}, nil
-}
-
-func (s *Service) GetProgress() (map[models.Course]map[models.Chapter][]models.Lesson, error) {
-	return nil, nil
 }
 
 func (s *Service) GetLesson() (models.Lesson, error) {

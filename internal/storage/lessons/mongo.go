@@ -28,14 +28,11 @@ import (
 // )
 
 type Mongo struct {
-	dbConn string
 	client *mongo.Client
 }
 
 func NewDB(conn string) *Mongo {
-	mongo := &Mongo{
-		dbConn: conn,
-	}
+	mongo := &Mongo{}
 	log.Print(conn)
 
 	if mongo.ping() {
@@ -45,7 +42,6 @@ func NewDB(conn string) *Mongo {
 	if err := mongo.connect(conn); err != nil {
 		panic(err)
 	}
-	defer mongo.disconnect()
 	log.Print("mongo conn ok")
 
 	return mongo
@@ -66,7 +62,8 @@ func (m *Mongo) connect(conn string) error {
 	return nil
 }
 
-func (m *Mongo) disconnect() error {
+func (m *Mongo) Disconnect() error {
+	log.Print("mongo disconn ok")
 	return m.client.Disconnect(context.Background())
 }
 

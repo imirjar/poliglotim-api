@@ -10,6 +10,7 @@ import (
 func Start() error {
 	config := config.New()
 	storage := storage.New(config.StorageConf.MongoConn, config.StorageConf.PsqlConn)
+	defer storage.Disconnect()
 	service := service.New()
 	srv := srv.New(config.GtwConf.Port)
 
