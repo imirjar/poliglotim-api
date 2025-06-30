@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -33,7 +34,7 @@ func (srv *HttpServer) Run() error {
 	router.Handle("/chapters/{course_id}", srv.getCourseChapters())
 	router.Handle("/lessons/{chapter_id}", srv.getChapterLessons())
 	router.Handle("/lesson/{lesson_id}", srv.getLesson())
-	return http.ListenAndServe(srv.Port, router)
+	return http.ListenAndServe(fmt.Sprintf(":%s", srv.Port), router)
 }
 
 func (srv *HttpServer) getCourses() http.HandlerFunc {

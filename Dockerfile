@@ -1,8 +1,5 @@
-# Базовый образ
-FROM golang:1.14.4-buster
-# Папка приложения
-ARG APP_DIR=app
-# Копирование файлов
-COPY . /go/tmp/src/${APP_NAME}
-# Рабочая директория
-WORKDIR /go/tmp/src/${APP_NAME}
+FROM golang:1.24
+WORKDIR /app
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o poliglotim_api ./cmd/main.go
+CMD ["./poliglotim_api"]
