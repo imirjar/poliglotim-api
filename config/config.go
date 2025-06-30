@@ -1,27 +1,42 @@
 package config
 
+import (
+	"log"
+	"os"
+
+	"github.com/caarlos0/env/v10"
+	"gopkg.in/yaml.v2"
+)
+
 type Config struct {
-	*GtwConf
-	*StorageConf
-}
-
-type GtwConf struct {
-	Port string
-}
-
-type StorageConf struct {
-	MongoConn string
-	PsqlConn  string
+	Port      string `yaml:"port" env:"PORT"`
+	PsqlConn  string `yaml:"postgresql_url" env:"POSTGRESQL_URL"`
+	MongoConn string `yaml:"mongodb_url" env:"MONGODB_URL"`
 }
 
 func New() *Config {
-	return &Config{
-		GtwConf: &GtwConf{
-			Port: ":9090",
-		},
-		StorageConf: &StorageConf{
-			MongoConn: "mongodb://imirjar:W6SgTpAcrTjJ41EX7NLYn7oE@db.sleaf.dev/PoliglotimCourses",
-			PsqlConn:  "postgres://imirjar:e2h2ey7hgt@91.122.105.45:5432/poliglotim?sslmode=disable",
-		},
+	cfg := Config{}
+	cfg.readFile()
+	cfg.readEnv()
+	return &cfg
+}
+
+func (cfg *Config) readFile() {
+	f, err := os.Open("config/config.yml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	decoder := yaml.NewDecoder(f)
+	err = decoder.Decode(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (cfg *Config) readEnv() {
+	if err := env.Parse(cfg); err != nil {
+		log.Printf("%+v\n", err)
 	}
 }

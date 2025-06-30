@@ -14,11 +14,11 @@ func Start(ctx context.Context) error {
 	config := config.New()
 
 	storage := storage.New(ctx)
-	storage.Сonnect(ctx, config.StorageConf.PsqlConn, config.StorageConf.MongoConn)
+	storage.Сonnect(ctx, config.PsqlConn, config.MongoConn)
 	defer storage.Disconnect(ctx)
 
 	service := service.New()
-	srv := srv.New(config.GtwConf.Port)
+	srv := srv.New(config.Port)
 
 	srv.Service = service
 	service.Storage = storage
