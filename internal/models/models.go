@@ -11,8 +11,7 @@ type Course struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Updated     time.Time `json:"updated"`
-	Logo        File      `json:"logo"`
-	Chapters    []Chapter `json:"chapters"`
+	Logo        File      `json:"logo,omitempty"`
 }
 
 type Chapter struct {
@@ -20,18 +19,20 @@ type Chapter struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Updated     time.Time `json:"updated"`
+	Course      string    `json:"course_id,omitempty"`
+}
+
+type Lesson struct {
+	Id      string    `json:"id" bson:"_id"`
+	Chapter string    `json:"chapter_id,omitempty"`
+	Title   string    `json:"title"`
+	Text    string    `json:"text"`
+	Updated time.Time `json:"updated"`
 }
 
 type File struct {
 	Id      primitive.ObjectID `json:"id"`
 	Name    string             `json:"name"`
 	Link    string             `json:"link"`
-	Updated time.Time          `json:"updated"`
-}
-
-type Lesson struct {
-	Id      primitive.ObjectID `json:"id" bson:"_id"`
-	Title   string             `json:"title"`
-	Text    string             `json:"text"`
 	Updated time.Time          `json:"updated"`
 }

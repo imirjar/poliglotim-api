@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/imirjar/poliglotim-api/internal/models"
 )
 
@@ -13,19 +15,32 @@ type Service struct {
 }
 
 type Storage interface {
-	GetLesson(id string) (models.Lesson, error)
-	GetCourses() ([]models.Course, error)
-	// GetChaptersFromCourse(courseId string) ([]models.Chapter, error)
+	GetLesson(context.Context, string) (models.Lesson, error)
+	GetCourses(context.Context) ([]models.Course, error)
+	GetChaptersFromCourse(context.Context, string) ([]models.Chapter, error)
+	GetChapterLessons(context.Context, string) ([]models.Lesson, error)
 }
 
-func (s *Service) GetCourses() ([]models.Course, error) {
-	return []models.Course{}, nil
+func (s *Service) GetCourses(ctx context.Context) ([]models.Course, error) {
+	return s.Storage.GetCourses(ctx)
 }
 
-func (s *Service) GetLesson() (models.Lesson, error) {
-	lesson, err := s.Storage.GetLesson("1")
+func (s *Service) GetChapterLessons(ctx context.Context, chapterID string) ([]models.Lesson, error) {
+	return s.Storage.GetChapterLessons(ctx, chapterID)
+}
+
+func (s *Service) GetLesson(ctx context.Context, lessonID string) (models.Lesson, error) {
+	lesson, err := s.Storage.GetLesson(ctx, lessonID)
 	if err != nil {
-		return models.Lesson{}, err
+		return lesson, err
+	}
+	return lesson, nil
+}
+
+func (s *Service) GetCourseChapters(ctx context.Context, courseID string) ([]models.Chapter, error) {
+	lesson, err := s.Storage.GetChaptersFromCourse(ctx, courseID)
+	if err != nil {
+		return lesson, err
 	}
 	return lesson, nil
 }

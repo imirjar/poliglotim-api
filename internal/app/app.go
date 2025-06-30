@@ -1,22 +1,29 @@
 package app
 
 import (
+	"context"
+	"log"
+
 	"github.com/imirjar/poliglotim-api/config"
 	srv "github.com/imirjar/poliglotim-api/internal/app/http"
 	"github.com/imirjar/poliglotim-api/internal/service"
 	"github.com/imirjar/poliglotim-api/internal/storage"
 )
 
-func Start() error {
+func Start(ctx context.Context) error {
 	config := config.New()
-	storage := storage.New(config.StorageConf.MongoConn, config.StorageConf.PsqlConn)
-	defer storage.Disconnect()
+
+	storage := storage.New(ctx)
+	storage.Сonnect(ctx, config.StorageConf.PsqlConn, config.StorageConf.MongoConn)
+	defer storage.Disconnect(ctx)
+
 	service := service.New()
 	srv := srv.New(config.GtwConf.Port)
 
 	srv.Service = service
 	service.Storage = storage
 
+	log.Printf("Starting server on the port %s... \n", config.Port)
 	return srv.Run()
 
 }
