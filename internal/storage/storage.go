@@ -6,14 +6,15 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	// "github.com/jackc/pgx/v5"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Storage struct {
 	mongo *mongo.Client
-	psql  *pgx.Conn
+	psql  *pgxpool.Pool
 }
 
 func New(ctx context.Context) *Storage {
@@ -22,8 +23,12 @@ func New(ctx context.Context) *Storage {
 
 func (s *Storage) Сonnect(ctx context.Context, PsqlConn, MongoConn string) error {
 
+	dbConfig, err := pgxpool.ParseConfig(PsqlConn)
+	if err != nil {
+		log.Fatal("Failed to create a config, error: ", err)
+	}
 	// Connect psql
-	pgx, err := pgx.Connect(context.Background(), PsqlConn)
+	pgx, err := pgxpool.NewWithConfig(context.Background(), dbConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -45,15 +50,11 @@ func (s *Storage) Сonnect(ctx context.Context, PsqlConn, MongoConn string) erro
 }
 
 func (s *Storage) Disconnect(ctx context.Context) error {
+	defer s.psql.Close()
 	err := s.mongo.Disconnect(context.Background())
 	if err != nil {
 		panic(err)
 	}
-	err = s.psql.Close(context.Background())
-	if err != nil {
-		panic(err)
-	}
-
 	return err
 }
 
