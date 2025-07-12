@@ -7,7 +7,7 @@ import (
 	"github.com/imirjar/poliglotim-api/internal/models"
 )
 
-func (p *Storage) GetChaptersFromCourse(ctx context.Context, courseId string) ([]models.Chapter, error) {
+func (s *Storage) GetChaptersFromCourse(ctx context.Context, courseId string) ([]models.Chapter, error) {
 
 	// Главы идут по порядку, поэтому им нужна "позиция"
 	// отображать ее в API не нужно
@@ -25,7 +25,7 @@ func (p *Storage) GetChaptersFromCourse(ctx context.Context, courseId string) ([
 			position
 	`
 
-	rows, err := p.psql.Query(ctx, query, courseId)
+	rows, err := s.psql.Query(ctx, query, courseId)
 	if err != nil {
 		return nil, err
 	}

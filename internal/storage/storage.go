@@ -8,13 +8,10 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	// "github.com/jackc/pgx/v5"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Storage struct {
-	mongo *mongo.Client
-	psql  *pgxpool.Pool
+	psql *pgxpool.Pool
 }
 
 func New(ctx context.Context) *Storage {
@@ -39,33 +36,22 @@ func (s *Storage) Сonnect(ctx context.Context, PsqlConn, MongoConn string) erro
 	// 	panic(err)
 	// }
 
-	// Connect MongoDB
-	mongo, err := mongo.Connect(ctx, options.Client().ApplyURI(MongoConn))
-	if err != nil {
-		panic(err)
-	}
-	s.mongo = mongo
-
 	return err
 }
 
 func (s *Storage) Disconnect(ctx context.Context) error {
 	defer s.psql.Close()
-	err := s.mongo.Disconnect(context.Background())
-	if err != nil {
-		panic(err)
-	}
-	return err
+	return nil
 }
 
-func (p *Storage) makeMigrations(ctx context.Context) error {
+func (s *Storage) makeMigrations(ctx context.Context) error {
 	migration, err := os.ReadFile("./internal/storage/migrations/0001_init.up.sql")
 	// log.Print(string(migration))
 
 	log.Printf("Применяем миграцию:\n%s", string(migration))
 
 	// Выполнение SQL-запроса
-	if _, err := p.psql.Exec(ctx, string(migration)); err != nil {
+	if _, err := s.psql.Exec(ctx, string(migration)); err != nil {
 		return fmt.Errorf("ошибка выполнения миграции: %v", err)
 	}
 

@@ -9,7 +9,7 @@ import (
 	"github.com/imirjar/poliglotim-api/internal/models"
 )
 
-func (p *Storage) GetCourses(ctx context.Context) ([]models.Course, error) {
+func (s *Storage) GetCourses(ctx context.Context) ([]models.Course, error) {
 	query := `
 		SELECT 
 			c.id, 
@@ -23,7 +23,7 @@ func (p *Storage) GetCourses(ctx context.Context) ([]models.Course, error) {
 			c.name
 	`
 
-	rows, err := p.psql.Query(ctx, query)
+	rows, err := s.psql.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
