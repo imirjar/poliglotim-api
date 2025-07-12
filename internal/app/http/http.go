@@ -46,7 +46,7 @@ func (srv *HttpServer) getCourses() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("content-type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		if err = json.NewEncoder(w).Encode(courses); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,7 +69,7 @@ func (srv *HttpServer) getCourseChapters() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("content-type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		if err = json.NewEncoder(w).Encode(lesson); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -91,7 +91,7 @@ func (srv *HttpServer) getChapterLessons() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("content-type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		if err = json.NewEncoder(w).Encode(lesson); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -113,7 +113,7 @@ func (srv *HttpServer) getLesson() http.HandlerFunc {
 			return
 		}
 
-		w.Header().Set("content-type", "application/json")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		if err = json.NewEncoder(w).Encode(lesson); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
