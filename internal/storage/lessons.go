@@ -16,7 +16,7 @@ func (s *Storage) GetChapterLessons(ctx context.Context, chapterID string) ([]mo
 			l.text, 
 			l.updated
 		FROM 
-			Lessons l
+			lessons l
 		WHERE 
 			chapter_id = $1
 		ORDER BY 
@@ -56,14 +56,14 @@ func (s *Storage) GetChapterLessons(ctx context.Context, chapterID string) ([]mo
 func (s *Storage) GetLesson(ctx context.Context, id string) (models.Lesson, error) {
 	query := `
 		SELECT 
-			c.id, 
-			c.name, 
-			c.description, 
-			c.updated
+			l.id, 
+			l.name, 
+			l.description, 
+			l.updated
 		FROM 
-			courses c
+			lessons l
 		WHERE
-			id = $1
+			l.id = $1
 	`
 	row := s.psql.QueryRow(ctx, query, id)
 
