@@ -12,8 +12,7 @@ func (s *Storage) GetChapterLessons(ctx context.Context, chapterID string) ([]mo
 	query := `
 		SELECT 
 			l.id, 
-			l.title, 
-			l.text, 
+			l.title,
 			l.updated
 		FROM 
 			lessons l
@@ -36,7 +35,6 @@ func (s *Storage) GetChapterLessons(ctx context.Context, chapterID string) ([]mo
 		err := rows.Scan(
 			&lesson.Id,
 			&lesson.Title,
-			&lesson.Text,
 			&lesson.Updated,
 		)
 		if err != nil {
@@ -57,8 +55,8 @@ func (s *Storage) GetLesson(ctx context.Context, id string) (models.Lesson, erro
 	query := `
 		SELECT 
 			l.id, 
-			l.name, 
-			l.description, 
+			l.title, 
+			l.text, 
 			l.updated
 		FROM 
 			lessons l
