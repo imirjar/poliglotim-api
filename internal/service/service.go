@@ -25,22 +25,15 @@ func (s *Service) GetCourses(ctx context.Context) ([]models.Course, error) {
 	return s.Storage.GetCourses(ctx)
 }
 
+func (s *Service) GetCourseChapters(ctx context.Context, courseID string) ([]models.Chapter, error) {
+	return s.Storage.GetChaptersFromCourse(ctx, courseID)
+}
+
 func (s *Service) GetChapterLessons(ctx context.Context, chapterID string) ([]models.Lesson, error) {
 	return s.Storage.GetChapterLessons(ctx, chapterID)
 }
 
 func (s *Service) GetLesson(ctx context.Context, lessonID string) (models.Lesson, error) {
-	lesson, err := s.Storage.GetLesson(ctx, lessonID)
-	if err != nil {
-		return lesson, err
-	}
-	return lesson, nil
-}
+	return s.Storage.GetLesson(ctx, lessonID)
 
-func (s *Service) GetCourseChapters(ctx context.Context, courseID string) ([]models.Chapter, error) {
-	lesson, err := s.Storage.GetChaptersFromCourse(ctx, courseID)
-	if err != nil {
-		return lesson, err
-	}
-	return lesson, nil
 }

@@ -3,14 +3,8 @@ package storage
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/imirjar/poliglotim-api/internal/models"
-	// "github.com/imirjar/poliglotim-api/internal/models"
-	// "go.mongodb.org/mongo-driver/bson/primitive"
-	// "go.mongodb.org/mongo-driver/mongo"
-	// "go.mongodb.org/mongo-driver/mongo/options"
-	// "go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func (s *Storage) GetChapterLessons(ctx context.Context, chapterID string) ([]models.Lesson, error) {
@@ -23,11 +17,13 @@ func (s *Storage) GetChapterLessons(ctx context.Context, chapterID string) ([]mo
 			l.updated
 		FROM 
 			Lessons l
+		WHERE 
+			chapter_id = $1
 		ORDER BY 
 			l.title
 	`
 
-	rows, err := s.psql.Query(ctx, query)
+	rows, err := s.psql.Query(ctx, query, chapterID)
 	if err != nil {
 		return nil, err
 	}
@@ -35,32 +31,19 @@ func (s *Storage) GetChapterLessons(ctx context.Context, chapterID string) ([]mo
 
 	var lessons []models.Lesson
 	for rows.Next() {
-		var course models.Lesson
-		var updated time.Time
+		var lesson models.Lesson
 
 		err := rows.Scan(
-			&course.Id,
-			&course.Title,
-			&course.Text,
-			&updated,
+			&lesson.Id,
+			&lesson.Title,
+			&lesson.Text,
+			&lesson.Updated,
 		)
 		if err != nil {
 			return nil, err
 		}
 
-		course.Updated = updated
-		// if logoPath.Valid {
-		// 	course.Logo = models.File{Path: logoPath.String}
-		// }
-
-		// // Получаем главы для курса
-		// chapters, err := p.GetChaptersFromCourse(course.Id)
-		// if err != nil {
-		// 	return nil, err
-		// }
-		// course.Chapters = chapters
-
-		lessons = append(lessons, course)
+		lessons = append(lessons, lesson)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -68,30 +51,7 @@ func (s *Storage) GetChapterLessons(ctx context.Context, chapterID string) ([]mo
 	}
 	log.Print()
 	return lessons, nil
-	// collection := s.mongo.Database("PoliglotimCourses").Collection("lessons")
 
-	// // Создаем фильтр для поиска уроков по chapter_id
-	// filter := bson.M{"chapter_id": chapterID}
-
-	// // Правильный вариант сортировки
-	// opts := options.Find().SetSort(bson.M{"position": 1}) // Используем bson.M вместо bson.D
-
-	// // Выполняем запрос
-	// cursor, err := collection.Find(ctx, filter, opts)
-	// if err != nil {
-	// 	log.Printf("ERROR finding lessons: %v", err)
-	// 	return nil, fmt.Errorf("failed to find lessons: %v", err)
-	// }
-	// defer cursor.Close(ctx)
-
-	// // Декодируем результаты
-	// var lessons []models.Lesson
-	// if err = cursor.All(ctx, &lessons); err != nil {
-	// 	log.Printf("ERROR decoding lessons: %v", err)
-	// 	return nil, fmt.Errorf("failed to decode lessons: %v", err)
-	// }
-
-	// return lessons, nil
 }
 func (s *Storage) GetLesson(ctx context.Context, id string) (models.Lesson, error) {
 	query := `
@@ -102,45 +62,21 @@ func (s *Storage) GetLesson(ctx context.Context, id string) (models.Lesson, erro
 			c.updated
 		FROM 
 			courses c
-		ORDER BY 
-			c.title
+		WHERE
+			id = $1
 	`
-
-	row := s.psql.QueryRow(ctx, query)
+	row := s.psql.QueryRow(ctx, query, id)
 
 	var lesson models.Lesson
-	var updated time.Time
-
 	err := row.Scan(
 		&lesson.Id,
 		&lesson.Title,
 		&lesson.Text,
-		&updated,
+		&lesson.Updated,
 	)
 	if err != nil {
 		return lesson, err
 	}
-	lesson.Updated = updated
 
 	return lesson, nil
-	// collection := s.mongo.Database("PoliglotimCourses").Collection("lessons")
-
-	// var lesson models.Lesson
-
-	// // Преобразуем строковый ID в ObjectID
-	// objID, err := primitive.ObjectIDFromHex(id)
-	// if err != nil {
-	// 	return lesson, fmt.Errorf("invalid report ID format: %v", err)
-	// }
-
-	// err = collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&lesson)
-	// if err != nil {
-	// 	if err == mongo.ErrNoDocuments {
-	// 		return lesson, fmt.Errorf("report not found")
-	// 	}
-	// 	log.Printf("ERROR getting report: %v", err)
-	// 	return lesson, fmt.Errorf("failed to get report: %v", err)
-	// }
-
-	// return lesson, nil
 }
