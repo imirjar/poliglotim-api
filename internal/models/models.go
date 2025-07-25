@@ -20,13 +20,14 @@ type Chapter struct {
 	Description string    `json:"description"`
 	Updated     time.Time `json:"updated"`
 	Course      string    `json:"course_id,omitempty"`
+	Lessons     []Lesson  `json:"lesson_ids,omitempty"`
 }
 
 type Lesson struct {
 	Id      string    `json:"id" bson:"_id"`
 	Chapter string    `json:"chapter_id,omitempty"`
 	Title   string    `json:"title"`
-	Text    string    `json:"text"`
+	Text    string    `json:"text,omitempty"`
 	Updated time.Time `json:"updated"`
 }
 

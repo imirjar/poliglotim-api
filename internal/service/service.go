@@ -26,7 +26,17 @@ func (s *Service) GetCourses(ctx context.Context) ([]models.Course, error) {
 }
 
 func (s *Service) GetCourseChapters(ctx context.Context, courseID string) ([]models.Chapter, error) {
-	return s.Storage.GetChaptersFromCourse(ctx, courseID)
+	chapters, err := s.Storage.GetChaptersFromCourse(ctx, courseID)
+
+	for i, chapter := range chapters {
+		lessons, err := s.Storage.GetChapterLessons(ctx, chapter.Id)
+		if err != nil {
+			return chapters, err
+		}
+		chapters[i].Lessons = lessons
+	}
+
+	return chapters, err
 }
 
 func (s *Service) GetChapterLessons(ctx context.Context, chapterID string) ([]models.Lesson, error) {
