@@ -20,7 +20,7 @@ type Chapter struct {
 	Description string    `json:"description"`
 	Updated     time.Time `json:"updated"`
 	Course      string    `json:"course_id,omitempty"`
-	Lessons     []Lesson  `json:"lesson_ids,omitempty"`
+	Lessons     []Lesson  `json:"lessons,omitempty"`
 }
 
 type Lesson struct {
