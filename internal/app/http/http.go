@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/imirjar/poliglotim-api/internal/models"
 )
@@ -30,6 +31,21 @@ func New(port string) *HttpServer {
 
 func (srv *HttpServer) Run() error {
 	router := mux.NewRouter()
+
+	// Настраиваем CORS middleware
+	corsMiddleware := handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}), // Разрешить все источники
+		// handlers.AllowedOrigins([]string{"http://localhost:59889"}), // Или конкретный источник
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"}),
+		handlers.ExposedHeaders([]string{"Link"}),
+		// handlers.AllowCredentials(),
+		handlers.MaxAge(300),
+	)
+
+	// Применяем CORS middleware ко всем маршрутам
+	router.Use(corsMiddleware)
+
 	router.Handle("/courses", srv.getCourses())
 	router.Handle("/chapters/{course_id}", srv.getCourseChapters())
 	router.Handle("/lessons/{chapter_id}", srv.getChapterLessons())
