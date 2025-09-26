@@ -7,11 +7,14 @@ import (
 )
 
 type Course struct {
-	Id          string    `json:"id" `
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Updated     time.Time `json:"updated"`
-	Logo        File      `json:"logo,omitempty"`
+	ID           string    `json:"id"`
+	Name         string    `json:"name"`
+	Description  string    `json:"description"`
+	Updated      time.Time `json:"updated"`
+	LogoPath     *string   `json:"logo_path,omitempty"`
+	IsPublished  bool      `json:"is_published"`
+	AllowedGroup string    `json:"allowed_group"`
+	Chapters     []Chapter `json:"chapters"`
 }
 
 type Chapter struct {

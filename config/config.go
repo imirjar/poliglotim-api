@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -9,34 +10,62 @@ import (
 )
 
 type Config struct {
-	Port      string `yaml:"port" env:"PORT"`
-	PsqlConn  string `yaml:"postgresql_url" env:"POSTGRESQL_URL"`
-	MongoConn string `yaml:"mongodb_url" env:"MONGODB_URL"`
+	Server   ServerConf  `yaml:"server" envPrefix:"SERVER_"`
+	Database StorageConf `yaml:"database" envPrefix:"DB_"`
+}
+
+type ServerConf struct {
+	Port string `yaml:"port" env:"PORT"`
+}
+
+type StorageConf struct {
+	Name string `yaml:"name" env:"NAME"`
+	User string `yaml:"user" env:"USER"`
+	Pswd string `yaml:"password" env:"PASSWORD"`
+	Host string `yaml:"host" env:"HOST"`
+	Port string `yaml:"port" env:"PORT"`
+}
+
+func (db *StorageConf) GetConnString() string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", db.User, db.Pswd, db.Host, db.Port, db.Name)
 }
 
 func New() *Config {
+
 	cfg := Config{}
-	cfg.readFile()
-	cfg.readEnv()
+	err := cfg.readFile("config/config.yml")
+	if err != nil {
+		log.Print(err)
+		return nil
+	}
+	err = cfg.readEnv()
+	if err != nil {
+		log.Print(err)
+		return nil
+	}
 	return &cfg
 }
 
-func (cfg *Config) readFile() {
-	f, err := os.Open("config/config.yml")
-	if err != nil {
-		log.Fatal(err)
+func (cfg *Config) readFile(configPath string) error {
+	if configPath != "" {
+		data, err := os.ReadFile(configPath)
+		if err != nil {
+			return err
+		}
+		if err := yaml.Unmarshal(data, cfg); err != nil {
+			return err
+		}
+		log.Println(cfg.Database.Name, cfg.Server.Port)
+		return nil
 	}
-	defer f.Close()
-
-	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return fmt.Errorf("no config file path")
 }
 
-func (cfg *Config) readEnv() {
-	if err := env.Parse(cfg); err != nil {
+func (cfg *Config) readEnv() error {
+	err := env.Parse(cfg)
+	if err != nil {
 		log.Printf("%+v\n", err)
 	}
+	return err
+
 }

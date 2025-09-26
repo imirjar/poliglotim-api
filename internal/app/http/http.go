@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/imirjar/poliglotim-api/internal/app/http/middleware"
 	"github.com/imirjar/poliglotim-api/internal/models"
 )
 
@@ -17,9 +17,10 @@ type HttpServer struct {
 }
 
 type Service interface {
-	GetCourses(context.Context) ([]models.Course, error)
-	GetChapterLessons(context.Context, string) ([]models.Lesson, error)
-	GetCourseChapters(context.Context, string) ([]models.Chapter, error)
+	GetAllCourses(context.Context) ([]models.Course, error)
+	// GetCourse(context.Context, string) (models.Course, error)
+	GetFullCourse(context.Context, string) (models.Course, error)
+	// GetCourseChapters(context.Context, string) ([]models.Chapter, error)
 	GetLesson(context.Context, string) (models.Lesson, error)
 }
 
@@ -31,24 +32,14 @@ func New(port string) *HttpServer {
 
 func (srv *HttpServer) Run() error {
 	router := mux.NewRouter()
-
-	// Настраиваем CORS middleware
-	corsMiddleware := handlers.CORS(
-		handlers.AllowedOrigins([]string{"*"}), // Разрешить все источники
-		// handlers.AllowedOrigins([]string{"http://localhost:59889"}), // Или конкретный источник
-		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-		handlers.AllowedHeaders([]string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"}),
-		handlers.ExposedHeaders([]string{"Link"}),
-		// handlers.AllowCredentials(),
-		handlers.MaxAge(300),
-	)
+	mdlwr := middleware.New()
 
 	// Применяем CORS middleware ко всем маршрутам
-	router.Use(corsMiddleware)
+	router.Use(mdlwr.CORS(), middleware.Auth())
 
 	router.Handle("/courses", srv.getCourses())
-	router.Handle("/chapters/{course_id}", srv.getCourseChapters())
-	router.Handle("/lessons/{chapter_id}", srv.getChapterLessons())
+	router.Handle("/course/{course_id}", srv.getCourse())
+	// router.Handle("/lessons/{chapter_id}", srv.getChapterLessons())
 	router.Handle("/lesson/{lesson_id}", srv.getLesson())
 	return http.ListenAndServe(fmt.Sprintf(":%s", srv.Port), router)
 }
@@ -56,7 +47,7 @@ func (srv *HttpServer) Run() error {
 func (srv *HttpServer) getCourses() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		courses, err := srv.Service.GetCourses(r.Context())
+		courses, err := srv.Service.GetAllCourses(r.Context())
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -72,14 +63,14 @@ func (srv *HttpServer) getCourses() http.HandlerFunc {
 	}
 }
 
-func (srv *HttpServer) getCourseChapters() http.HandlerFunc {
+func (srv *HttpServer) getCourse() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		vars := mux.Vars(r)
 		courseID := vars["course_id"]
 		// log.Print(lessonID)
 
-		lesson, err := srv.Service.GetCourseChapters(r.Context(), courseID)
+		lesson, err := srv.Service.GetFullCourse(r.Context(), courseID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -94,28 +85,10 @@ func (srv *HttpServer) getCourseChapters() http.HandlerFunc {
 	}
 }
 
-func (srv *HttpServer) getChapterLessons() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		vars := mux.Vars(r)
-		chapterID := vars["chapter_id"]
-		// log.Print(lessonID)
-
-		lesson, err := srv.Service.GetChapterLessons(r.Context(), chapterID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		if err = json.NewEncoder(w).Encode(lesson); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	}
-}
-
+// необходимо получать урок по временной ссылке
+// так как не факт что у пользователя есть доступ к этому уроку
+// так как его прогресс по курсу не позволяет или у него нет доступа к курсу
+// или курс этого урока не опубликован
 func (srv *HttpServer) getLesson() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 

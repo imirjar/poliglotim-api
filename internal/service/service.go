@@ -15,35 +15,28 @@ type Service struct {
 }
 
 type Storage interface {
-	GetLesson(context.Context, string) (models.Lesson, error)
 	GetCourses(context.Context) ([]models.Course, error)
-	GetChaptersFromCourse(context.Context, string) ([]models.Chapter, error)
-	GetChapterLessons(context.Context, string) ([]models.Lesson, error)
+	GetCourseWithContent(context.Context, string) (models.Course, error)
+	GetLesson(context.Context, string) (models.Lesson, error)
 }
 
-func (s *Service) GetCourses(ctx context.Context) ([]models.Course, error) {
+// Fetch all of 'published' courses.
+func (s *Service) GetAllCourses(ctx context.Context) ([]models.Course, error) {
 	return s.Storage.GetCourses(ctx)
 }
 
-func (s *Service) GetCourseChapters(ctx context.Context, courseID string) ([]models.Chapter, error) {
-	chapters, err := s.Storage.GetChaptersFromCourse(ctx, courseID)
-
-	for i, chapter := range chapters {
-		lessons, err := s.Storage.GetChapterLessons(ctx, chapter.Id)
-		if err != nil {
-			return chapters, err
-		}
-		chapters[i].Lessons = lessons
+// Get course plan with chapters and lessons name without lessons text.
+func (s *Service) GetFullCourse(ctx context.Context, courseID string) (models.Course, error) {
+	// Check user permisson for this course
+	course, err := s.Storage.GetCourseWithContent(ctx, courseID)
+	if err != nil {
+		return course, err
 	}
 
-	return chapters, err
-}
-
-func (s *Service) GetChapterLessons(ctx context.Context, chapterID string) ([]models.Lesson, error) {
-	return s.Storage.GetChapterLessons(ctx, chapterID)
+	return course, nil
 }
 
 func (s *Service) GetLesson(ctx context.Context, lessonID string) (models.Lesson, error) {
+	// Check user progress for this course
 	return s.Storage.GetLesson(ctx, lessonID)
-
 }
