@@ -3,9 +3,8 @@ include .env
 .PHONY: run build test prod docker-build docker-run docker-clean
 
 
-
-#docs:
-#	swag init -g internal/gateway/http/http.go 
+swagger:
+	swag init -g internal/app/http/http.go -o docs/
 
 # Проходим все тесты
 test: 

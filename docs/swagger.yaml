@@ -1,0 +1,178 @@
+basePath: /
+definitions:
+  http.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  models.Chapter:
+    properties:
+      course_id:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      lessons:
+        items:
+          $ref: '#/definitions/models.Lesson'
+        type: array
+      name:
+        type: string
+      updated:
+        type: string
+    type: object
+  models.Course:
+    properties:
+      allowed_group:
+        type: string
+      chapters:
+        items:
+          $ref: '#/definitions/models.Chapter'
+        type: array
+      description:
+        type: string
+      id:
+        type: string
+      is_published:
+        type: boolean
+      logo_path:
+        type: string
+      name:
+        type: string
+      updated:
+        type: string
+    type: object
+  models.Lesson:
+    properties:
+      chapter_id:
+        type: string
+      id:
+        type: string
+      text:
+        type: string
+      title:
+        type: string
+      updated:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@poliglotim.com
+    name: API Support
+  description: API Gateway для образовательной платформы Poliglotim
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Poliglotim API Gateway
+  version: "1.0"
+paths:
+  /course/{course_id}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает полную информацию о курсе включая главы и уроки
+      parameters:
+      - description: ID курса
+        in: path
+        name: course_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о курсе
+          schema:
+            $ref: '#/definitions/models.Course'
+        "400":
+          description: Неверный ID курса
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Курс не найден
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получить курс по ID
+      tags:
+      - courses
+  /courses:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список всех доступных курсов
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список курсов
+          schema:
+            items:
+              $ref: '#/definitions/models.Course'
+            type: array
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получить все курсы
+      tags:
+      - courses
+  /lesson/{lesson_id}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает информацию об уроке по временной ссылке
+      parameters:
+      - description: ID урока
+        in: path
+        name: lesson_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация об уроке
+          schema:
+            $ref: '#/definitions/models.Lesson'
+        "400":
+          description: Неверный ID урока
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "403":
+          description: Доступ запрещен
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Урок не найден
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Получить урок по ID
+      tags:
+      - lessons
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
