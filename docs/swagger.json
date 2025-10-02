@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API Gateway для образовательной платформы Poliglotim",
+        "description": "API для образовательной платформы Poliglotim",
         "title": "Poliglotim API Gateway",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
@@ -14,7 +14,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "localhost:6060",
     "basePath": "/",
     "paths": {
         "/course/{course_id}": {

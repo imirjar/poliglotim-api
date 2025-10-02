@@ -283,11 +283,11 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "localhost:6060",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Poliglotim API Gateway",
-	Description:      "API Gateway для образовательной платформы Poliglotim",
+	Description:      "API для образовательной платформы Poliglotim",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

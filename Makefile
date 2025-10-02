@@ -16,14 +16,15 @@ run:
 
 # Собираем бинарник
 build:
-	CGO_ENABLED=0 GOOS=linux go build -o bin/$(BIN_NAME) $(APP_FILE)
+# 	CGO_ENABLED=0 GOOS=linux go build -o bin/$(BIN_NAME) $(APP_FILE)
+	GOOS=linux GOARCH=amd64 go build -o bin/$(BIN_NAME) $(APP_FILE)
 
 # Собираем бинарник запуск в консоли
 start: build 
 	./bin/$(BIN_NAME) &
 
 # Docker сборка
-docker-build: 
+docker-build: build
 	docker build -t $(DOCKER_IMAGE_NAME) .
 
 # Запуск проекта в Docker контейнере с использованием .env файла

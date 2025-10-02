@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/imirjar/poliglotim-api/internal/models"
+	"github.com/imirjar/poliglotim-api/internal/domain/models"
 )
 
 func New() *Service {

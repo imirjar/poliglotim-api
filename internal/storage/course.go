@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/imirjar/poliglotim-api/internal/models"
+	"github.com/imirjar/poliglotim-api/internal/domain/models"
 )
 
 func (s *Storage) GetCourseWithContent(ctx context.Context, courseID string) (models.Course, error) {

@@ -1,3 +1,7 @@
 .env
 
 config/*.yml
+
+*.pem
+
+/bin

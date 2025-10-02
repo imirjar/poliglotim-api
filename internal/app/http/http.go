@@ -9,14 +9,14 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/imirjar/poliglotim-api/docs" // важно: импорт сгенерированной документации
 	"github.com/imirjar/poliglotim-api/internal/app/http/middleware"
-	"github.com/imirjar/poliglotim-api/internal/models"
+	"github.com/imirjar/poliglotim-api/internal/domain/models"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 // HttpServer представляет HTTP сервер приложения
 // @title Poliglotim API Gateway
 // @version 1.0
-// @description API Gateway для образовательной платформы Poliglotim
+// @description API для образовательной платформы Poliglotim
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name API Support
@@ -25,7 +25,7 @@ import (
 // @license.name MIT
 // @license.url https://opensource.org/licenses/MIT
 
-// @host localhost:8080
+// @host localhost:6060
 // @BasePath /
 // @securityDefinitions.apikey BearerAuth
 // @in header
@@ -49,16 +49,16 @@ func New(port string) *HttpServer {
 
 func (srv *HttpServer) Run() error {
 	router := mux.NewRouter()
-	mdlwr := middleware.New()
-
-	// Применяем CORS middleware ко всем маршрутам
-	router.Use(mdlwr.CORS(), middleware.Auth())
 
 	// Swagger документация
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
+	// Создаем подмаршрут для защищенных endpoints
+	protected := router.PathPrefix("").Subrouter()
+	protected.Use(middleware.Auth())
+
 	router.Handle("/courses", srv.getCourses()).Methods("GET")
-	router.Handle("/course/{course_id}", srv.getCourse()).Methods("GET")
+	protected.Handle("/course/{course_id}", srv.getCourse()).Methods("GET")
 	router.Handle("/lesson/{lesson_id}", srv.getLesson()).Methods("GET")
 
 	return http.ListenAndServe(fmt.Sprintf(":%s", srv.Port), router)

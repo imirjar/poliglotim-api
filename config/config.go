@@ -15,7 +15,9 @@ type Config struct {
 }
 
 type ServerConf struct {
-	Port string `yaml:"port" env:"PORT"`
+	Port    string `yaml:"port" env:"PORT"`
+	PubKey  string `yaml:"pub_key" env:"PUBKEY"`
+	PrivKey string `yaml:"priv_key" env:"PRIVKEY"`
 }
 
 type StorageConf struct {

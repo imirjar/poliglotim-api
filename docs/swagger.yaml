@@ -60,12 +60,12 @@ definitions:
       updated:
         type: string
     type: object
-host: localhost:8080
+host: localhost:6060
 info:
   contact:
     email: support@poliglotim.com
     name: API Support
-  description: API Gateway для образовательной платформы Poliglotim
+  description: API для образовательной платформы Poliglotim
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT

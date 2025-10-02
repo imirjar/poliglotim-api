@@ -1,5 +1,10 @@
-FROM golang:1.24
-WORKDIR /app
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o poliglotim_api ./cmd/main.go
-CMD ["./poliglotim_api"]
+FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+
+COPY bin/poliglotim-api .
+COPY config/config.yml ./config/config.yml
+COPY .env .env
+
+CMD ["./poliglotim-api"]
