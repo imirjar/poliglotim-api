@@ -15,6 +15,15 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     - uses: actions/setup-go@v6
+    - name: 'Create env file'
+      run: |
+        touch .env
+        echo DOCKER_CONTAINER_NAME=${{ variables.DOCKER_NAMESPACE }} >> .env
+        echo APP_FILE=${{ variables.DOCKER_NAMESPACE }} >> .env
+        echo BIN_NAME=${{ variables.DOCKER_NAMESPACE }} >> .env
+        echo DOCKER_IMAGE_NAME=${{ variables.DOCKER_NAMESPACE }} >> .env
+        echo DOCKER_NAMESPACE=${{ variables.DOCKER_NAMESPACE }} >> .env
+        cat .env
     - name: Test
       run: make test
     # - name: Build image and publish
