@@ -18,11 +18,11 @@ jobs:
     - name: 'Create env file'
       run: |
         touch .env
-        echo DOCKER_CONTAINER_NAME=${{ variables.DOCKER_NAMESPACE }} >> .env
-        echo APP_FILE=${{ variables.DOCKER_NAMESPACE }} >> .env
-        echo BIN_NAME=${{ variables.DOCKER_NAMESPACE }} >> .env
-        echo DOCKER_IMAGE_NAME=${{ variables.DOCKER_NAMESPACE }} >> .env
-        echo DOCKER_NAMESPACE=${{ variables.DOCKER_NAMESPACE }} >> .env
+        echo DOCKER_CONTAINER_NAME=${{ env.DOCKER_NAMESPACE }} >> .env
+        echo APP_FILE=${{ env.DOCKER_NAMESPACE }} >> .env
+        echo BIN_NAME=${{ env.DOCKER_NAMESPACE }} >> .env
+        echo DOCKER_IMAGE_NAME=${{ env.DOCKER_NAMESPACE }} >> .env
+        echo DOCKER_NAMESPACE=${{ env.DOCKER_NAMESPACE }} >> .env
         cat .env
     - name: Test
       run: make test
