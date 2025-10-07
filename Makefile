@@ -27,6 +27,9 @@ start: build
 docker-build: build
 	docker build -t $(DOCKER_IMAGE_NAME) .
 
+docker-publish: docker-build
+	docker push $(DOCKER_NAMESPACE) 
+
 # Запуск проекта в Docker контейнере с использованием .env файла
 docker-run: docker-build
 	docker run -d --env-file .env --name $(DOCKER_CONTAINER_NAME) -p $(PORT):$(PORT) $(DOCKER_IMAGE_NAME)

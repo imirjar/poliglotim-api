@@ -15,6 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     - uses: actions/setup-go@v6
-    - name: Build the Docker image
-    - run: make test
-    - run: make docker-publish
+    - name: Test
+      run: make test
+    - name: Build image and publish
+      run: make docker-publish
