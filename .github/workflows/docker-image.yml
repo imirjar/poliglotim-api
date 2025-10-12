@@ -9,11 +9,11 @@ on:
 
 env:
   # Установите значения по умолчанию
-  DOCKER_CONTAINER_NAME: ${{ vars.DOCKER_CONTAINER_NAME }}
-  APP_FILE: ${{ vars.APP_FILE }}
-  BIN_NAME: ${{ vars.BIN_NAME }}
-  DOCKER_IMAGE_NAME: ${{ vars.DOCKER_IMAGE_NAME }}
-  DOCKER_NAMESPACE: ${{ vars.DOCKER_NAMESPACE }}
+  DOCKER_CONTAINER_NAME: ${{ env.DOCKER_CONTAINER_NAME }}
+  APP_FILE: ${{ env.APP_FILE }}
+  BIN_NAME: ${{ env.BIN_NAME }}
+  DOCKER_IMAGE_NAME: ${{ env.DOCKER_IMAGE_NAME }}
+  DOCKER_NAMESPACE: ${{ env.DOCKER_NAMESPACE }}
 
 jobs:
   Test:
