@@ -15,11 +15,11 @@ jobs:
     - name: 'Create env file'
       run: |
         touch .env
-        echo DOCKER_CONTAINER_NAME=${{env.DOCKER_CONTAINER_NAME}} >> .env
-        echo APP_FILE=${{env.APP_FILE}} >> .env
-        echo BIN_NAME=${{env.BIN_NAME}} >> .env
-        echo DOCKER_IMAGE_NAME=${{env.DOCKER_IMAGE_NAME}} >> .env
-        echo DOCKER_NAMESPACE=${{env.DOCKER_NAMESPACE}} >> .env
+        echo DOCKER_CONTAINER_NAME=${{vars.DOCKER_CONTAINER_NAME}} >> .env
+        echo APP_FILE=${{vars.APP_FILE}} >> .env
+        echo BIN_NAME=${{vars.BIN_NAME}} >> .env
+        echo DOCKER_IMAGE_NAME=${{vars.DOCKER_IMAGE_NAME}} >> .env
+        echo DOCKER_NAMESPACE=${{vars.DOCKER_NAMESPACE}} >> .env
         cat .env
         make test
         make docker-publish
