@@ -21,10 +21,12 @@ jobs:
         echo DOCKER_IMAGE_NAME=${{ env.DOCKER_IMAGE_NAME }} >> .env
         echo DOCKER_NAMESPACE=${{ env.DOCKER_NAMESPACE }} >> .env
         cat .env
+        make test
+        make docker-publish
     # - name: Test
-      run: make test
+      # run: make test
     # - name: Build&&publish
-      run: make docker-publish
+      # run: make docker-publish
   # Publish:
   #   runs-on: ubuntu-latest
   #   steps:
