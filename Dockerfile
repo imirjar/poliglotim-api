@@ -21,10 +21,10 @@ FROM alpine:latest
 WORKDIR /root/
 
 # Copy the built binary from the builder stage
-COPY --from=builder /app/main .
+COPY --from=builder poliglotim-api .
 
 # Expose the port your application listens on (optional)
 EXPOSE 8080
 
 # Command to run the application
-CMD ["./main"]
+CMD ["./poliglotim-api"]
