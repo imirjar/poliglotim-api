@@ -24,7 +24,7 @@ start: build
 	$(BIN_NAME) &
 
 # Docker сборка
-docker-build: build
+docker-build:
 	docker build -t $(DOCKER_IMAGE_NAME) .
 
 docker-publish: docker-build

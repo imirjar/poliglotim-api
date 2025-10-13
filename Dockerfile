@@ -13,7 +13,7 @@ COPY . .
 # Build the Go application
 # CGO_ENABLED=0 disables CGO, creating a statically linked binary
 # -o specifies the output file name
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o poliglotim-api .
+RUN GOOS=linux GOARCH=amd64 go build -o poliglotim-api cmd/main.go
 
 # Stage 2: Runtime
 FROM alpine:latest
