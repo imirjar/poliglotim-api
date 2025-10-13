@@ -8,11 +8,11 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_CONTAINER_NAME: ${{ env.DOCKER_CONTAINER_NAME }}
-  APP_FILE: ${{ env.APP_FILE }}
-  BIN_NAME: ${{ env.BIN_NAME }}
-  DOCKER_IMAGE_NAME: ${{ env.DOCKER_IMAGE_NAME }}
-  DOCKER_NAMESPACE: ${{ env.DOCKER_NAMESPACE }}
+  DOCKER_CONTAINER_NAME: ${{ variables.DOCKER_CONTAINER_NAME }}
+  APP_FILE: ${{ variables.APP_FILE }}
+  BIN_NAME: ${{ variables.BIN_NAME }}
+  DOCKER_IMAGE_NAME: ${{ variables.DOCKER_IMAGE_NAME }}
+  DOCKER_NAMESPACE: ${{ variables.DOCKER_NAMESPACE }}
 
 jobs:
   Test:
