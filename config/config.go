@@ -31,36 +31,44 @@ type StorageConf struct {
 func (db *StorageConf) GetConnString() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", db.User, db.Pswd, db.Host, db.Port, db.Name)
 }
-
 func New() *Config {
-
 	cfg := Config{}
-	err := cfg.readFile("config/config.yml")
+
+	// Пытаемся прочитать файл, но не падаем если его нет
+	_ = cfg.readFile("config/config.yml")
+
+	// Всегда читаем переменные окружения (перезаписывают файл)
+	err := cfg.readEnv()
 	if err != nil {
 		log.Print(err)
 		return nil
 	}
-	err = cfg.readEnv()
-	if err != nil {
-		log.Print(err)
-		return nil
-	}
+
 	return &cfg
 }
 
 func (cfg *Config) readFile(configPath string) error {
-	if configPath != "" {
-		data, err := os.ReadFile(configPath)
-		if err != nil {
-			return err
-		}
-		if err := yaml.Unmarshal(data, cfg); err != nil {
-			return err
-		}
-		log.Println(cfg.Database.Name, cfg.Server.Port)
+	if configPath == "" {
+		return fmt.Errorf("no config file path")
+	}
+
+	// Проверяем существование файла
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		log.Printf("Config file %s not found, using environment variables only", configPath)
 		return nil
 	}
-	return fmt.Errorf("no config file path")
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return err
+	}
+
+	if err := yaml.Unmarshal(data, cfg); err != nil {
+		return err
+	}
+
+	log.Printf("Loaded config from file: %s", configPath)
+	return nil
 }
 
 func (cfg *Config) readEnv() error {
