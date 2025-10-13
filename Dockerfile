@@ -15,6 +15,8 @@ COPY . .
 # -o specifies the output file name
 RUN GOOS=linux GOARCH=amd64 go build -o poliglotim-api cmd/main.go
 
+RUN ls -a
+
 # Stage 2: Runtime
 FROM alpine:latest
 
