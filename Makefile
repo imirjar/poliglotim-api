@@ -1,5 +1,5 @@
 # Define project variables
-PROJECT_NAME := my-golang-app
+PROJECT_NAME := poliglotim-api
 GO_FILES := $(shell find . -name '*.go' -print)
 
 # Default target: build the application
