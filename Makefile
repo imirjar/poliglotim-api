@@ -1,45 +1,62 @@
-include .env
+# Define project variables
+PROJECT_NAME := my-golang-app
+GO_FILES := $(shell find . -name '*.go' -print)
 
-.PHONY: run build test prod docker-build docker-run docker-clean
+# Default target: build the application
+.PHONY: all
+all: build
 
-
-swagger:
-	swag init -g internal/app/http/http.go -o docs/
-
-# Проходим все тесты
-test: 
-	go test ./...
-
-# Запускаем в консоли
-run:
-	go run $(APP_FILE)
-
-# Собираем бинарник
+# Build target: compiles the Go application
+.PHONY: build
 build:
+	go build -o ./bin/$(PROJECT_NAME) .
 # 	CGO_ENABLED=0 GOOS=linux go build -o bin/$(BIN_NAME) $(APP_FILE)
-	GOOS=linux GOARCH=amd64 go build -o $(BIN_NAME) $(APP_FILE)
+# 	GOOS=linux GOARCH=amd64 go build -o $(BIN_NAME) $(APP_FILE)
 
-# Собираем бинарник запуск в консоли
-start: build 
-	$(BIN_NAME) &
+# Test target: runs all unit tests
+.PHONY: test
+test:
+	go test -v ./...
 
-# Docker сборка
-docker-build:
-	docker build -t $(DOCKER_IMAGE_NAME) .
+# Clean target: removes compiled binaries and other artifacts
+.PHONY: clean
+clean:
+	rm -f ./bin/$(PROJECT_NAME)
+	go clean
 
-docker-publish: docker-build
-	docker push $(DOCKER_NAMESPACE) 
+# Format target: formats Go source code using gofmt
+.PHONY: fmt
+fmt:
+	gofmt -w $(GO_FILES)
 
-# Запуск проекта в Docker контейнере с использованием .env файла
-docker-run: docker-build
-	docker run -d --env-file .env --name $(DOCKER_CONTAINER_NAME) -p $(PORT):$(PORT) $(DOCKER_IMAGE_NAME)
+# Lint target: runs golint for code style checks
+.PHONY: lint
+lint:
+	golint ./...
 
-# Очищение контейнера после остановки
-docker-clean:
-	@if [ "$(shell docker ps -a -q --filter "name=$(DOCKER_CONTAINER_NAME)")" ]; then \
-		docker rm $(DOCKER_CONTAINER_NAME); \
-	fi
+# Vet target: runs go vet for static analysis
+.PHONY: vet
+vet:
+	go vet ./...
 
-# Полный цикл сборки и запуска в Docker
-prod: docker-clean docker-run
-# prod: docker-run
+# Install dependencies target
+.PHONY: deps
+deps:
+	go mod tidy
+	go mod download
+
+# Help target: displays available commands
+.PHONY: help
+help:
+	@echo "Usage: make <target>"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all     - Builds the application (default)"
+	@echo "  build   - Compiles the Go application"
+	@echo "  test    - Runs all unit tests"
+	@echo "  clean   - Removes compiled binaries and other artifacts"
+	@echo "  fmt     - Formats Go source code"
+	@echo "  lint    - Runs golint for code style checks"
+	@echo "  vet     - Runs go vet for static analysis"
+	@echo "  deps    - Installs Go module dependencies"
+	@echo "  help    - Displays this help message"
