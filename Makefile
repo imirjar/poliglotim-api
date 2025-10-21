@@ -9,7 +9,7 @@ all: build
 # Build target: compiles the Go application
 .PHONY: build
 build:
-	go build -o ./bin/$(PROJECT_NAME) .
+	go build -o ./bin/$(PROJECT_NAME) ./cmd/main.go
 # 	CGO_ENABLED=0 GOOS=linux go build -o bin/$(BIN_NAME) $(APP_FILE)
 # 	GOOS=linux GOARCH=amd64 go build -o $(BIN_NAME) $(APP_FILE)
 
