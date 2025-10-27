@@ -39,7 +39,7 @@ jobs:
   #     run: make build
   
   Publish:
-    needs: [Build]  
+    needs: [Test]  
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v5
