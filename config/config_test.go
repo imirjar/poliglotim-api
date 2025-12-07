@@ -88,7 +88,7 @@ func TestStorageConf_GetConnString(t *testing.T) {
 				Host: "localhost",
 				Port: "5432",
 			},
-			want: "postgres://user:pass@localhost:5432/mydb?sslmode=disable",
+			want: "postgresql://user:pass@localhost:5432/mydb?sslmode=disable",
 		},
 		{
 			name: "empty password",
@@ -99,7 +99,7 @@ func TestStorageConf_GetConnString(t *testing.T) {
 				Host: "localhost",
 				Port: "5432",
 			},
-			want: "postgres://user:@localhost:5432/mydb?sslmode=disable",
+			want: "postgresql://user:@localhost:5432/mydb?sslmode=disable",
 		},
 	}
 
