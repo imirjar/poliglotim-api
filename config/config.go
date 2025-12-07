@@ -29,7 +29,7 @@ type StorageConf struct {
 }
 
 func (db *StorageConf) GetConnString() string {
-	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", db.User, db.Pswd, db.Host, db.Port, db.Name)
+	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", db.User, db.Pswd, db.Host, db.Port, db.Name)
 }
 func New() *Config {
 	cfg := Config{}
