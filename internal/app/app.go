@@ -14,16 +14,16 @@ func Start(ctx context.Context) error {
 	config := config.New()
 
 	storage := storage.New(ctx)
-	storage.Сonnect(ctx, config.Database.GetConnString())
+	storage.Сonnect(ctx, config.DBConn)
 	defer storage.Disconnect(ctx)
 
 	service := service.New()
-	srv := srv.New(config.Server.Port)
+	srv := srv.New(config.Port)
 
 	srv.Service = service
 	service.Storage = storage
 
-	log.Printf("Starting server on the port %s... \n", config.Server.Port)
+	log.Printf("Starting server on the port %s... \n", config.Port)
 	return srv.Run()
 
 }

@@ -17,7 +17,7 @@ func (s *Storage) GetCourseWithContent(ctx context.Context, courseID string) (mo
         SELECT 
             c.id, c.name, c.description, 
             to_char(c.updated, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as updated,
-            c.logo_path, c.is_published, c.allowed_group,
+            c.logo_path, c.is_published,
             COALESCE(
                 json_agg(
                     json_build_object(
@@ -57,7 +57,7 @@ func (s *Storage) GetCourseWithContent(ctx context.Context, courseID string) (mo
 	err := s.psql.QueryRow(ctx, query, courseID).Scan(
 		&course.ID, &course.Name, &course.Description,
 		&updatedStr, &logoPath, &course.IsPublished,
-		&course.AllowedGroup, &chaptersJSON,
+		&chaptersJSON,
 	)
 
 	if err != nil {

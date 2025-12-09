@@ -1,41 +1,18 @@
 package config
 
 import (
-	"fmt"
 	"log"
-	"os"
 
 	"github.com/caarlos0/env/v10"
-	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	Server   ServerConf  `yaml:"server" envPrefix:"SERVER_"`
-	Database StorageConf `yaml:"database" envPrefix:"DB_"`
+	Port   string `env:"PORT"`
+	DBConn string `env:"DB_CONN"`
 }
 
-type ServerConf struct {
-	Port    string `yaml:"port" env:"PORT"`
-	PubKey  string `yaml:"pub_key" env:"PUBKEY"`
-	PrivKey string `yaml:"priv_key" env:"PRIVKEY"`
-}
-
-type StorageConf struct {
-	Name string `yaml:"name" env:"NAME"`
-	User string `yaml:"user" env:"USER"`
-	Pswd string `yaml:"password" env:"PASSWORD"`
-	Host string `yaml:"host" env:"HOST"`
-	Port string `yaml:"port" env:"PORT"`
-}
-
-func (db *StorageConf) GetConnString() string {
-	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", db.User, db.Pswd, db.Host, db.Port, db.Name)
-}
 func New() *Config {
 	cfg := Config{}
-
-	// Пытаемся прочитать файл, но не падаем если его нет
-	_ = cfg.readFile("config/config.yml")
 
 	// Всегда читаем переменные окружения (перезаписывают файл)
 	err := cfg.readEnv()
@@ -45,30 +22,6 @@ func New() *Config {
 	}
 
 	return &cfg
-}
-
-func (cfg *Config) readFile(configPath string) error {
-	if configPath == "" {
-		return fmt.Errorf("no config file path")
-	}
-
-	// Проверяем существование файла
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		log.Printf("Config file %s not found, using environment variables only", configPath)
-		return nil
-	}
-
-	data, err := os.ReadFile(configPath)
-	if err != nil {
-		return err
-	}
-
-	if err := yaml.Unmarshal(data, cfg); err != nil {
-		return err
-	}
-
-	log.Printf("Loaded config from file: %s", configPath)
-	return nil
 }
 
 func (cfg *Config) readEnv() error {
